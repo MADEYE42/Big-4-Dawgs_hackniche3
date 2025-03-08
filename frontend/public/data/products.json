@@ -1,0 +1,233 @@
+[
+    {
+      "id": 1,
+      "name": "FLYING&SAM Women Flats Sandal",
+      "category": "Footwear",
+      "subcategory": "Women's Flats",
+      "price": 295,
+      "original_price": 999,
+      "discount": "70% off",
+      "rating": 4.1,
+      "reviews": 5008,
+      "image": "/images/flying_sam_sandal.jpg",
+      "thumbnail_images": [
+        "/images/flying_sam_sandal1.jpg",
+        "/images/flying_sam_sandal2.jpg",
+        "/images/flying_sam_sandal3.jpg"
+      ],
+      "available_offers": [
+        {
+          "title": "Bank Offer",
+          "description": "5% Unlimited Cashback on Flipkart Axis Bank Credit Card",
+          "terms": "T&C"
+        },
+        {
+          "title": "Bank Offer",
+          "description": "10% off up to ₹1,250 on HDFC Bank Credit Card Transactions. Min Txn Value: ₹4,990",
+          "terms": "T&C"
+        }
+      ],
+      "delivery": {
+        "estimated_date": "11 Mar, Tuesday",
+        "delivery_charge": "Free",
+        "cash_on_delivery": true
+      }
+    },
+    {
+      "id": 2,
+      "name": "Nike Running Shoes",
+      "category": "Footwear",
+      "subcategory": "Men's Shoes",
+      "price": 3499,
+      "original_price": 5999,
+      "discount": "42% off",
+      "rating": 4.5,
+      "reviews": 8500,
+      "image": "/images/nike_shoes.jpg",
+      "thumbnail_images": [
+        "/images/nike_shoes1.jpg",
+        "/images/nike_shoes2.jpg"
+      ],
+      "available_offers": [
+        {
+          "title": "Bank Offer",
+          "description": "10% off on ICICI Bank Credit Cards, up to ₹1,500",
+          "terms": "T&C"
+        }
+      ],
+      "delivery": {
+        "estimated_date": "12 Mar, Wednesday",
+        "delivery_charge": "₹40",
+        "cash_on_delivery": false
+      }
+    },
+    {
+      "id": 3,
+      "name": "Samsung Galaxy S23 Ultra",
+      "category": "Electronics",
+      "subcategory": "Mobile Phones",
+      "price": 109999,
+      "original_price": 124999,
+      "discount": "12% off",
+      "rating": 4.8,
+      "reviews": 12000,
+      "image": "/images/samsung_s23_ultra.jpg",
+      "thumbnail_images": [
+        "/images/samsung_s23_ultra1.jpg",
+        "/images/samsung_s23_ultra2.jpg"
+      ],
+      "available_offers": [
+        {
+          "title": "Bank Offer",
+          "description": "Flat ₹5,000 Instant Discount on HDFC Bank Credit Cards",
+          "terms": "T&C"
+        }
+      ],
+      "delivery": {
+        "estimated_date": "10 Mar, Monday",
+        "delivery_charge": "Free",
+        "cash_on_delivery": true
+      }
+    },
+    {
+      "id": 4,
+      "name": "Sony WH-1000XM5 Wireless Headphones",
+      "category": "Electronics",
+      "subcategory": "Audio",
+      "price": 29999,
+      "original_price": 34999,
+      "discount": "14% off",
+      "rating": 4.7,
+      "reviews": 8500,
+      "image": "/images/sony_wh1000xm5.jpg",
+      "thumbnail_images": [
+        "/images/sony_wh1000xm5_1.jpg",
+        "/images/sony_wh1000xm5_2.jpg"
+      ],
+      "available_offers": [
+        {
+          "title": "Bank Offer",
+          "description": "10% off on SBI Credit Cards",
+          "terms": "T&C"
+        }
+      ],
+      "delivery": {
+        "estimated_date": "13 Mar, Wednesday",
+        "delivery_charge": "₹50",
+        "cash_on_delivery": true
+      }
+    },
+    {
+      "id": 5,
+      "name": "Apple MacBook Air M2",
+      "category": "Electronics",
+      "subcategory": "Laptops",
+      "price": 104999,
+      "original_price": 119999,
+      "discount": "12% off",
+      "rating": 4.9,
+      "reviews": 6000,
+      "image": "/images/macbook_air_m2.jpg",
+      "thumbnail_images": [
+        "/images/macbook_air_m2_1.jpg",
+        "/images/macbook_air_m2_2.jpg"
+      ],
+      "available_offers": [
+        {
+          "title": "Exchange Offer",
+          "description": "Up to ₹15,000 off on exchange of old laptop",
+          "terms": "T&C"
+        }
+      ],
+      "delivery": {
+        "estimated_date": "14 Mar, Thursday",
+        "delivery_charge": "Free",
+        "cash_on_delivery": false
+      }
+    },
+    {
+      "id": 6,
+      "name": "Adidas Men's Sports Jacket",
+      "category": "Fashion",
+      "subcategory": "Men's Clothing",
+      "price": 2999,
+      "original_price": 4999,
+      "discount": "40% off",
+      "rating": 4.3,
+      "reviews": 3200,
+      "image": "/images/adidas_jacket.jpg",
+      "thumbnail_images": [
+        "/images/adidas_jacket1.jpg",
+        "/images/adidas_jacket2.jpg"
+      ],
+      "available_offers": [
+        {
+          "title": "Bank Offer",
+          "description": "Flat ₹500 Instant Discount on Axis Bank Cards",
+          "terms": "T&C"
+        }
+      ],
+      "delivery": {
+        "estimated_date": "15 Mar, Friday",
+        "delivery_charge": "Free",
+        "cash_on_delivery": true
+      }
+    },
+    {
+      "id": 7,
+      "name": "Woodland Hiking Boots",
+      "category": "Footwear",
+      "subcategory": "Men's Boots",
+      "price": 4999,
+      "original_price": 7999,
+      "discount": "38% off",
+      "rating": 4.4,
+      "reviews": 2100,
+      "image": "/images/woodland_boots.jpg",
+      "thumbnail_images": [
+        "/images/woodland_boots1.jpg",
+        "/images/woodland_boots2.jpg"
+      ],
+      "available_offers": [
+        {
+          "title": "Exchange Offer",
+          "description": "Get ₹1,500 off on exchange",
+          "terms": "T&C"
+        }
+      ],
+      "delivery": {
+        "estimated_date": "16 Mar, Saturday",
+        "delivery_charge": "₹50",
+        "cash_on_delivery": true
+      }
+    },
+    {
+      "id": 8,
+      "name": "Philips Beard Trimmer",
+      "category": "Personal Care",
+      "subcategory": "Grooming",
+      "price": 1999,
+      "original_price": 2999,
+      "discount": "33% off",
+      "rating": 4.5,
+      "reviews": 5400,
+      "image": "/images/philips_trimmer.jpg",
+      "thumbnail_images": [
+        "/images/philips_trimmer1.jpg",
+        "/images/philips_trimmer2.jpg"
+      ],
+      "available_offers": [
+        {
+          "title": "Bank Offer",
+          "description": "10% off on HDFC Cards",
+          "terms": "T&C"
+        }
+      ],
+      "delivery": {
+        "estimated_date": "17 Mar, Sunday",
+        "delivery_charge": "Free",
+        "cash_on_delivery": true
+      }
+    }
+  ]
+  
