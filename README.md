@@ -130,11 +130,11 @@ The platform utilizes:
 ## 📌 Getting Started  
 1️⃣ Clone this repository:  
 ```bash
-git clone https://github.com/your-repo/shopmart.git
+git clone https://github.com/your-repo/shopmart.git](https://github.com/MADEYE42/Big-4-Dawgs_hackniche3.git
 ```
 2️⃣ Install dependencies:  
 ```bash
-cd shopmart  
+cd frontend  
 npm install  
 ```
 3️⃣ Run the application:  
