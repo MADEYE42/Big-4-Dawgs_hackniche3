@@ -147,14 +147,4 @@ http://localhost:3000
 ```
 
 ---
-
-## 📞 Contact & Contribution  
-🤝 Want to contribute or have suggestions? Feel free to open an issue or reach out!  
-
-📩 Email: [your-email@example.com]  
-🔗 GitHub: [your-github-link]  
-🌐 Website: [your-website-link]  
-
----
-
 🚀 **ShopMart – Revolutionizing E-Commerce with AI!** 🛒  
