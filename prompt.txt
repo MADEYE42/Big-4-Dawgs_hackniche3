@@ -1,0 +1,16 @@
+use python,
+read index.html file and parse it with beautifulsoup
+
+
+find all div with class="cPHDOP col-12-12"
+for each div above list,
+try find img loading="eager" with class="DByuf4" then link=img.src
+except links=''
+try div class="KzDlHZ"
+except title=''
+try find span with class="a-icon-alt" then rating=div.text
+except rating=''
+try find div class="_5OesEi" then =div.text
+except price=''
+try find div class="_6NESgJ" then 
+open data.json and write link,title,rating and price.
