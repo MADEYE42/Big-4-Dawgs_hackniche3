@@ -250,7 +250,7 @@ if __name__ == "__main__":
     url = "https://www.amazon.in/s?k=smartphones&i=electronics&crid=MU2BOMQCUT3U&sprefix=smartphone%2Celectronics%2C194&ref=nb_sb_noss_2"
 
     # Number of pages to scrape
-    num_pages = 2
+    num_pages = 15
 
     # If you have sample HTML for testing
     sample_html = """

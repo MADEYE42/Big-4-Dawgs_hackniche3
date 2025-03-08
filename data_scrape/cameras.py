@@ -397,7 +397,7 @@ if __name__ == "__main__":
     url = "https://www.amazon.in/s?k=cameras&rh=n%3A3404636031&ref=nb_sb_noss"
 
     # Number of pages to scrape
-    num_pages = 5
+    num_pages = 15  # Changed from 5 to 15
 
     logger.info("Starting Amazon scraper")
     scraper = AmazonScraper(proxies=proxy_list)
