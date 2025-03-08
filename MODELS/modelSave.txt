@@ -1,0 +1,6 @@
+save_model() - This method:
+
+Creates a directory to store the model files if it doesn't exist
+Saves the ResNet50 feature extractor model to a .h5 file
+Saves the precomputed features, image paths, and ASINs to a pickle file
+This preserves all the information needed without having to reindex your images
