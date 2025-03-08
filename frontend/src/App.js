@@ -7,6 +7,8 @@ import Footer from "./components/Footer";
 import Categories from "./pages/Categories";
 import SDashboard from "./pages/SellerDashboard"; 
 import ADashboard from "./pages/Admin"; 
+import ContactUs from "./pages/ContactUs";
+import AboutUs from "./pages/AboutUs";
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -38,7 +40,8 @@ function App() {
                     <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
-                    
+                    <Route path="/contact" element={<ContactUs />} />
+                    <Route path="/about" element={<AboutUs />} />
                     {/* Seller Dashboard (Protected) */}
                     <Route element={<ProtectedRoute allowedRoles={["seller"]} />}>
                         <Route path="/seller-dashboard" element={<SDashboard />} />
