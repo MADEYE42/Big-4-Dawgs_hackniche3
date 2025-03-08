@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 import csv
 import time
 import random
+import os
+from datetime import datetime
 
 def get_user_agent():
     """Return a random user agent from a predefined list to help avoid detection."""
@@ -16,18 +18,21 @@ def get_user_agent():
     ]
     return random.choice(user_agents)
 
-def scrape_amazon_products(url, num_pages=1):
+def scrape_amazon_products(url, num_pages=15, max_retries=3, checkpoint_interval=5):
     """
     Scrape Amazon product listings based on the provided URL and number of pages.
     
     Args:
         url (str): The Amazon search URL to scrape
         num_pages (int): Number of pages to scrape
+        max_retries (int): Maximum number of retries for failed requests
+        checkpoint_interval (int): Save intermediate results every N pages
         
     Returns:
         list: List of dictionaries containing product information
     """
     all_products = []
+    checkpoint_file = f"amazon_products_checkpoint_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
     
     for page in range(1, num_pages + 1):
         if page > 1:
@@ -39,7 +44,7 @@ def scrape_amazon_products(url, num_pages=1):
         else:
             current_url = url
         
-        print(f"Scraping page {page}: {current_url}")
+        print(f"Scraping page {page} of {num_pages}: {current_url}")
         
         headers = {
             "User-Agent": get_user_agent(),
@@ -50,18 +55,45 @@ def scrape_amazon_products(url, num_pages=1):
             "Cache-Control": "max-age=0"
         }
         
-        try:
-            # Add a delay before each request to appear more human-like
-            time.sleep(random.uniform(2, 5))
-            
-            response = requests.get(current_url, headers=headers)
-            if response.status_code != 200:
-                print(f"Failed to retrieve the page. Status code: {response.status_code}")
-                continue
+        retry_count = 0
+        success = False
+        
+        while retry_count < max_retries and not success:
+            try:
+                # Add a varying delay between requests to appear more human-like
+                # Longer delays for Amazon to reduce chance of being blocked
+                delay = random.uniform(5, 10)
+                print(f"Waiting {delay:.2f} seconds before request...")
+                time.sleep(delay)
                 
+                response = requests.get(current_url, headers=headers)
+                
+                if response.status_code == 200:
+                    success = True
+                    print(f"Successfully retrieved page {page}")
+                elif response.status_code == 503 or response.status_code == 429:
+                    # Service unavailable or too many requests - longer wait
+                    retry_count += 1
+                    wait_time = 60 * retry_count  # Increase wait time with each retry
+                    print(f"Rate limited (status {response.status_code}). Waiting {wait_time} seconds before retry {retry_count}/{max_retries}...")
+                    time.sleep(wait_time)
+                else:
+                    print(f"Failed to retrieve page. Status code: {response.status_code}")
+                    retry_count += 1
+                    time.sleep(10)
+            except Exception as e:
+                print(f"Error during request: {e}")
+                retry_count += 1
+                time.sleep(10)
+        
+        if not success:
+            print(f"Failed to retrieve page {page} after {max_retries} retries. Skipping.")
+            continue
+        
+        try:
             soup = BeautifulSoup(response.content, 'html.parser')
             
-            # Get all product containers - updated selector for laptop search page
+            # Get all product containers
             product_containers = soup.select('div[data-component-type="s-search-result"]')
             
             print(f"Found {len(product_containers)} product containers on page {page}.")
@@ -74,7 +106,6 @@ def scrape_amazon_products(url, num_pages=1):
                     product['asin'] = container.get('data-asin', 'N/A')
                     
                     # Extract product title
-                    # First check for the h2 that contains the title (based on the sample HTML)
                     title_elem = container.select_one('h2')
                     if title_elem:
                         # Look for aria-label attribute which often contains the full title
@@ -111,7 +142,7 @@ def scrape_amazon_products(url, num_pages=1):
                     img_elem = container.select_one('img.s-image')
                     product['image_url'] = img_elem['src'] if img_elem and 'src' in img_elem.attrs else 'N/A'
                     
-                    # Extract ratings - updated selector based on the sample HTML
+                    # Extract ratings
                     rating_elem = container.select_one('i[class*="a-icon-star"], i[class*="a-star"]')
                     if rating_elem:
                         # Try to extract rating from aria-label
@@ -126,13 +157,13 @@ def scrape_amazon_products(url, num_pages=1):
                     else:
                         product['rating'] = 'N/A'
                     
-                    # Extract number of reviews - updated selector based on the sample HTML
+                    # Extract number of reviews
                     reviews_elem = container.select_one('a span.s-underline-text')
                     if not reviews_elem:
                         reviews_elem = container.select_one('span.a-size-base.s-underline-text')
                     product['reviews_count'] = reviews_elem.text.strip() if reviews_elem else '0'
                     
-                    # Extract current price - updated for laptop page format
+                    # Extract current price
                     price_elem = container.select_one('span.a-price span.a-offscreen')
                     if price_elem:
                         product['price'] = price_elem.text.strip()
@@ -148,7 +179,7 @@ def scrape_amazon_products(url, num_pages=1):
                     original_price_elem = container.select_one('span.a-price.a-text-price span.a-offscreen')
                     product['original_price'] = original_price_elem.text.strip() if original_price_elem else product['price']
                     
-                    # Extract discount percentage - updated for laptop page
+                    # Extract discount percentage
                     discount_elem = container.select_one('span.a-letter-space + span')
                     if discount_elem and '(' in discount_elem.text and ')' in discount_elem.text:
                         product['discount'] = discount_elem.text.strip()
@@ -161,7 +192,7 @@ def scrape_amazon_products(url, num_pages=1):
                     prime_elem = container.select_one('i.a-icon-prime, span.aok-relative.s-icon-text-medium.s-prime')
                     product['prime'] = 'Yes' if prime_elem else 'No'
                     
-                    # Extract delivery date information - updated based on sample HTML
+                    # Extract delivery date information
                     delivery_elem = container.select_one('span.a-color-base.a-text-bold')
                     if not delivery_elem:
                         delivery_elem = container.select_one('span[aria-label*="delivery"]')
@@ -171,21 +202,30 @@ def scrape_amazon_products(url, num_pages=1):
                     sponsored_elem = container.select_one('span.a-color-secondary:contains("Sponsored")')
                     product['sponsored'] = 'Yes' if sponsored_elem else 'No'
                     
-                    # Print for debugging - truncate long titles
-                    print(f"Extracted product: {product['title'][:50]}..." if product['title'] != 'N/A' else "Failed to extract title")
+                    # Add page number information
+                    product['page'] = page
+                    
+                    # Print shortened title for debugging
+                    title_preview = (product['title'][:47] + '...') if len(product['title']) > 50 else product['title']
+                    print(f"Extracted: {title_preview}")
                     
                     all_products.append(product)
                     
                 except Exception as e:
                     print(f"Error parsing product: {e}")
                     continue
-            
+        
         except Exception as e:
             print(f"Error scraping page {page}: {e}")
+        
+        # Save checkpoint data periodically
+        if page % checkpoint_interval == 0:
+            print(f"Creating checkpoint after page {page}...")
+            save_to_csv(all_products, f"checkpoint_page_{page}_{checkpoint_file}")
     
     return all_products
 
-def save_to_csv(products, filename='amazon_laptops.csv'):
+def save_to_csv(products, filename='amazon_laptops_15pages.csv'):
     """
     Save the scraped products to a CSV file.
     
@@ -212,107 +252,29 @@ def save_to_csv(products, filename='amazon_laptops.csv'):
     
     print(f"Saved {len(products)} products to {filename}")
 
-def test_extraction_with_sample(html_content):
-    """
-    Test extraction with provided HTML sample.
-    
-    Args:
-        html_content (str): HTML content to test extraction on
-    """
-    print("Testing extraction with provided HTML sample...")
-    
-    soup = BeautifulSoup(html_content, 'html.parser')
-    container = soup.select_one('div[data-component-type="s-search-result"]')
-    
-    if not container:
-        print("No product container found in the sample HTML")
-        return
-    
-    print("\nContainer found! Testing selectors:")
-    
-    # Test ASIN extraction
-    asin = container.get('data-asin', 'Not found')
-    print(f"ASIN: {asin}")
-    
-    # Test title extraction
-    title_elem = container.select_one('h2')
-    title = "Not found"
-    if title_elem:
-        if 'aria-label' in title_elem.attrs:
-            title = title_elem['aria-label']
-        else:
-            title_span = title_elem.select_one('span')
-            if title_span:
-                title = title_span.text.strip()
-            else:
-                title = title_elem.text.strip()
-    print(f"Title: {title}")
-    
-    # Test price extraction
-    price_elem = container.select_one('span.a-price span.a-offscreen')
-    price = price_elem.text.strip() if price_elem else "Not found"
-    print(f"Price: {price}")
-    
-    # Test original price extraction
-    original_price_elem = container.select_one('span.a-price.a-text-price span.a-offscreen')
-    original_price = original_price_elem.text.strip() if original_price_elem else "Not found"
-    print(f"Original price: {original_price}")
-    
-    # Test rating extraction
-    rating_elem = container.select_one('i[class*="a-icon-star"]')
-    rating = "Not found"
-    if rating_elem:
-        if 'aria-label' in rating_elem.attrs:
-            rating = rating_elem['aria-label']
-        else:
-            rating_text = rating_elem.select_one('span.a-icon-alt')
-            if rating_text:
-                rating = rating_text.text
-    print(f"Rating: {rating}")
-    
-    # Test reviews count extraction
-    reviews_elem = container.select_one('a span.s-underline-text')
-    reviews = reviews_elem.text.strip() if reviews_elem else "Not found"
-    print(f"Reviews count: {reviews}")
-    
-    # Test delivery extraction
-    delivery_elem = container.select_one('span[aria-label*="delivery"], span.a-text-bold')
-    delivery = delivery_elem.text.strip() if delivery_elem else "Not found"
-    print(f"Delivery info: {delivery}")
-    
-    # Test prime badge
-    prime_elem = container.select_one('i.a-icon-prime, span.s-prime')
-    prime = "Yes" if prime_elem else "No"
-    print(f"Prime: {prime}")
-    
-    print("\nExtraction test complete!")
-
 if __name__ == "__main__":
     # URL to scrape - laptops search page
     url = "https://www.amazon.in/s?k=laptops&crid=1WDCNLG2RPSXG&sprefix=laptops%2Caps%2C211&ref=nb_sb_noss_2"
     
-    # Number of pages to scrape
-    num_pages = 2
-    
-    # Sample HTML for testing - use document_content from paste-2.txt
-    sample_html = """
-    <!-- Paste the sample HTML here -->
-    """
-    
-    # If you have the HTML sample for testing
-    test_html = """<div role="listitem" data-asin="B0DTYZ2CG8" data-component-type="s-search-result">...</div>"""
-    
-    if len(sample_html.strip()) > 100:  # If sample HTML is provided
-        test_extraction_with_sample(sample_html)
+    # Number of pages to scrape - now set to 15
+    num_pages = 15
     
     # Ask for confirmation before starting the scrape
+    print(f"This script will scrape {num_pages} pages from Amazon.")
+    print("WARNING: Scraping too many pages too quickly may get your IP temporarily blocked.")
     confirm = input("Do you want to start scraping Amazon? (y/n): ")
+    
     if confirm.lower() == 'y':
+        # Create a timestamp for the filename
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"amazon_laptops_{timestamp}.csv"
+        
         # Scrape the products
-        products = scrape_amazon_products(url, num_pages)
+        products = scrape_amazon_products(url, num_pages, max_retries=3, checkpoint_interval=5)
         
         # Save to CSV
         if products:
-            save_to_csv(products, 'amazon_laptops.csv')
+            save_to_csv(products, filename)
+            print(f"Scraping complete! Found {len(products)} products across {num_pages} pages.")
     else:
         print("Scraping canceled.")
