@@ -1,4 +1,4 @@
-# 🛍️ ShopMart – AI-Powered E-Commerce Marketplace  
+# 🛍️ ShopMart 
 
 ## 📌 Problem Statement  
 **ShopMart** is a **mobile-compatible e-commerce marketplace** that connects buyers and sellers, featuring an **AI-powered recommendation system**.  
