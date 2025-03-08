@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Home = () => {
     return (
@@ -12,9 +13,11 @@ const Home = () => {
                 <p className="text-gray-600 mt-4 text-lg md:text-xl">
                     Discover exclusive deals & latest trends at unbeatable prices!
                 </p>
+                <Link to="/shop">
                 <button className="mt-6 bg-black text-white px-8 py-3 rounded-full text-lg font-semibold shadow-lg hover:bg-gray-800 transition">
                     Start Shopping
                 </button>
+                </Link>
             </header>
 
             {/* Categories Section */}

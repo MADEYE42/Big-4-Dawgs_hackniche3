@@ -62,15 +62,7 @@ const Navbar = () => {
                         <li><Link to="/shop" className="flex items-center py-2 border-b" onClick={() => setIsMenuOpen(false)}><ShoppingBag className="mr-2" size={20} /> Shop</Link></li>
                         <li><Link to="/about" className="flex items-center py-2 border-b" onClick={() => setIsMenuOpen(false)}><Info className="mr-2" size={20} /> About</Link></li>
                         <li><Link to="/contact" className="flex items-center py-2" onClick={() => setIsMenuOpen(false)}><Phone className="mr-2" size={20} /> Contact</Link></li>
-                        {user ? (
-                            <>
-                                <li><Link to="/profile" className="flex items-center py-2 border-b" onClick={() => setIsMenuOpen(false)}><User className="mr-2" size={20} /> Profile</Link></li>
-                                </>
-                        ) : (
-                            <li>
-                                <Link to="/login" className="flex items-center py-2 border-t" onClick={() => setIsMenuOpen(false)}><LogIn className="mr-2" size={20} /> Login</Link>
-                            </li>
-                        )}
+                        
                     </ul>
                 </div>
             )}
