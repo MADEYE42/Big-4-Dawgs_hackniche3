@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
 const Login = () => {
-    const [form, setForm] = useState({ email: "", password: "" });
+    const [form, setForm] = useState({ email: "", password: "", role: "" });
     const [error, setError] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
@@ -19,15 +19,18 @@ const Login = () => {
         try {
             const res = await login(form);
             localStorage.setItem("token", res.data.token);
-            navigate("/");
+            localStorage.setItem("role", res.data.role);
+
+            if (res.data.role === "customer") navigate("/");
+            else navigate("/dashboard");
         } catch (err) {
             setError(err.response?.data?.error || "Login failed. Please try again.");
         }
     };
 
     return (
-        <div className="flex items-center justify-center h-screen bg-black">
-            <div className="w-full max-w-md bg-white  backdrop-blur-lg p-8 rounded-xl shadow-lg border border-gray-700">
+        <div className="font-[Poppins] flex items-center justify-center h-screen bg-gray-900">
+            <div className="w-full max-w-md bg-white backdrop-blur-lg p-8 rounded-xl shadow-lg border border-gray-700">
                 <div className="flex justify-center mb-6">
                     <img src="/logo.png" alt="Logo" className="h-8" />
                 </div>
@@ -45,6 +48,7 @@ const Login = () => {
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    {/* Email Input */}
                     <div>
                         <label className="block text-gray-600 text-sm font-medium mb-1">Email address</label>
                         <input
@@ -52,11 +56,13 @@ const Login = () => {
                             name="email"
                             className="w-full border border-gray-500 bg-transparent text-white p-3 rounded-lg focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
                             placeholder="Enter your email"
+                            value={form.email}
                             onChange={handleChange}
                             required
                         />
                     </div>
 
+                    {/* Password Input */}
                     <div className="relative">
                         <label className="block text-gray-600 text-sm font-medium mb-1">Password</label>
                         <input
@@ -64,6 +70,7 @@ const Login = () => {
                             name="password"
                             className="w-full border border-gray-500 bg-transparent text-white p-3 rounded-lg focus:ring-2 focus:ring-blue-500 placeholder-gray-400 pr-10"
                             placeholder="Enter your password"
+                            value={form.password}
                             onChange={handleChange}
                             required
                         />
@@ -75,6 +82,24 @@ const Login = () => {
                         </span>
                     </div>
 
+                    {/* Role Selection Dropdown */}
+                    <div>
+                        <label className="block text-gray-600 text-sm font-medium mb-1">Select Role</label>
+                        <select
+                            name="role"
+                            className="w-full border border-gray-500 bg-transparent text-black p-3 rounded-lg focus:ring-2 focus:ring-blue-500"
+                            value={form.role}
+                            onChange={handleChange}
+                            required
+                        >
+                            <option value="" disabled>Select your role</option>
+                            <option value="customer">Customer</option>
+                            <option value="seller">Seller</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                    </div>
+
+                    {/* Submit Button */}
                     <button
                         type="submit"
                         className="w-full bg-white text-black p-3 rounded-lg font-semibold hover:bg-gray-300 transition duration-300 border border-black"
@@ -85,6 +110,7 @@ const Login = () => {
 
                 <div className="text-center my-4 text-gray-500">OR</div>
                 
+                {/* Google Login Button */}
                 <button className="w-full border border-gray-500 hover:text-white p-3 rounded-lg font-medium hover:bg-gray-700 text-black transition duration-300 flex justify-center items-center">
                     <img src="/google-icon.png" alt="Google" className="h-5 w-5 mr-2" />
                     Log in with Google

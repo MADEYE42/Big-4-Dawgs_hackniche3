@@ -3,18 +3,28 @@ import { register } from "../utils/api";
 import { useNavigate } from "react-router-dom";
 
 const Register = () => {
-    const [form, setForm] = useState({ name: "", email: "", password: "" });
+    const [form, setForm] = useState({ name: "", email: "", password: "", role: "" });
     const [error, setError] = useState("");
     const navigate = useNavigate();
 
     const handleChange = (e) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setForm((prevForm) => ({
+            ...prevForm,
+            [name]: value
+        }));
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("Submitting form data:", form);
         setError("");
         try {
+            if (!form.role) {
+                setError("Please select a role.");
+                return;
+            }
+
             await register(form);
             navigate("/login");
         } catch (err) {
@@ -23,7 +33,7 @@ const Register = () => {
     };
 
     return (
-        <div className="flex h-screen">
+        <div className="flex h-screen font-[Poppins] ">
             {/* Left Side - Form */}
             <div className="w-1/2 flex flex-col justify-center items-center bg-white p-12">
                 <div className="w-full max-w-md">
@@ -80,9 +90,25 @@ const Register = () => {
                             />
                         </div>
 
+                        <div>
+                            <label className="block text-gray-700 text-sm font-medium mb-1">Select Role</label>
+                            <select
+                                name="role"
+                                className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-black"
+                                value={form.role}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="" disabled>Select your role</option>
+                                <option value="customer">Customer</option>
+                                <option value="seller">Seller</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                        </div>
+
                         <button
                             type="submit"
-                            className="w-full bg-black text-white p-3 rounded-lg font-semibold hover:bg-black transition duration-300"
+                            className="w-full bg-black text-white p-3 rounded-lg font-semibold hover:bg-gray-800 transition duration-300"
                         >
                             Sign up
                         </button>
@@ -97,7 +123,7 @@ const Register = () => {
             </div>
 
             {/* Right Side - Design Pattern */}
-            <div className="w-1/2 bg-black flex items-center justify-center">
+            <div className="w-1/2 bg-gray-900 flex items-center justify-center">
                 <div className="grid grid-cols-3 gap-2">
                     {Array(9).fill(null).map((_, i) => (
                         <div key={i} className="w-16 h-16 bg-black rounded-br-full"></div>
@@ -109,3 +135,4 @@ const Register = () => {
 };
 
 export default Register;
+    

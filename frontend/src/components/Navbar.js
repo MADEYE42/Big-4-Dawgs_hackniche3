@@ -18,7 +18,7 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="bg-white text-black shadow-md py-4 px-6 flex justify-between items-center">
+        <nav className="bg-white font-[Poppins] text-black shadow-md py-4 px-6 flex justify-between items-center">
             {/* Logo */}
             <Link to="/" className="text-2xl font-bold">ShopMart</Link>
 

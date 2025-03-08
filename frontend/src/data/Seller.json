@@ -1,0 +1,73 @@
+[
+    {
+      "item": "Laptop",
+      "price": 1200,
+      "sales": 45,
+      "revenue": 54000,
+      "stock_remaining": 20
+    },
+    {
+      "item": "Smartphone",
+      "price": 800,
+      "sales": 60,
+      "revenue": 48000,
+      "stock_remaining": 35
+    },
+    {
+      "item": "Headphones",
+      "price": 150,
+      "sales": 150,
+      "revenue": 22500,
+      "stock_remaining": 75
+    },
+    {
+      "item": "Gaming Console",
+      "price": 500,
+      "sales": 30,
+      "revenue": 15000,
+      "stock_remaining": 10
+    },
+    {
+      "item": "Smartwatch",
+      "price": 250,
+      "sales": 100,
+      "revenue": 25000,
+      "stock_remaining": 50
+    },
+    {
+      "item": "Wireless Mouse",
+      "price": 50,
+      "sales": 200,
+      "revenue": 10000,
+      "stock_remaining": 150
+    },
+    {
+      "item": "Keyboard",
+      "price": 100,
+      "sales": 120,
+      "revenue": 12000,
+      "stock_remaining": 80
+    },
+    {
+      "item": "Tablet",
+      "price": 600,
+      "sales": 40,
+      "revenue": 24000,
+      "stock_remaining": 25
+    },
+    {
+      "item": "External Hard Drive",
+      "price": 120,
+      "sales": 80,
+      "revenue": 9600,
+      "stock_remaining": 40
+    },
+    {
+      "item": "Monitor",
+      "price": 300,
+      "sales": 50,
+      "revenue": 15000,
+      "stock_remaining": 30
+    }
+  ]
+  

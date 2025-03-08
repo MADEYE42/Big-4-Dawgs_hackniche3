@@ -1,14 +1,25 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate, Outlet } from "react-router-dom";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Categories from "./pages/Categories";
+import Dashboard from "./pages/Dashboard"; // Import Dashboard if not already imported
 
-function ProtectedRoute({ children }) {
-    const isAuthenticated = localStorage.getItem("token"); 
-    return isAuthenticated ? children : <Navigate to="/login" replace />;
+function ProtectedRoute({ children, allowedRoles }) {
+    const isAuthenticated = localStorage.getItem("token");
+    const userRole = localStorage.getItem("role");
+    console.log(userRole);
+    if (!isAuthenticated) {
+        return <Navigate to="/login" replace />;
+    }
+
+    if (allowedRoles && !allowedRoles.includes(userRole)) {
+        return <Navigate to="/" replace />;
+    }
+
+    return children ? children : <Outlet />;
 }
 
 function App() {
@@ -19,10 +30,15 @@ function App() {
                 <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/shop" element={<ProtectedRoute><Categories /></ProtectedRoute>} />
+                
+                {/* Protected Route for Seller/Admin */}
+                <Route element={<ProtectedRoute allowedRoles={["seller", "admin"]} />}>
+                    <Route path="/dashboard" element={<Dashboard />} />
+                </Route>
 
+                <Route path="/shop" element={<ProtectedRoute><Categories /></ProtectedRoute>} />
             </Routes>
-            <Footer/>
+            <Footer />
         </Router>
     );
 }

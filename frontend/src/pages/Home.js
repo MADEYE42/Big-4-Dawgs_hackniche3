@@ -2,7 +2,7 @@ import React from "react";
 
 const Home = () => {
     return (
-        <div className="bg-gray-100 min-h-screen">
+        <div className="bg-gray-100 min-h-screen font-[Poppins]">
             
             <header className="text-center py-12">
                 <h1 className="text-5xl font-bold text-gray-900">
