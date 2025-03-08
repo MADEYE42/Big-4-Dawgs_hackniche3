@@ -1,3 +1,22 @@
-import { type RouteConfig, index } from "@react-router/dev/routes";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Home from "./routes/home";
+import { Welcome } from "./welcome/welcome";
+import Login from "./auth/Login";
+import Signup from "./auth/Signup";
+import PrivateRoute from "./auth/PrivateRoute";
+import { AuthProvider } from "./auth/AuthContext";
 
-export default [index("routes/home.tsx")] satisfies RouteConfig;
+const AppRoutes: React.FC = () => (
+  <AuthProvider>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Welcome />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/home" element={<PrivateRoute><Home /></PrivateRoute>} />
+      </Routes>
+    </Router>
+  </AuthProvider>
+);
+
+export default AppRoutes;
