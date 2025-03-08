@@ -145,6 +145,17 @@ npm start
 ```bash
 http://localhost:3000  
 ```
+5️⃣ Backend:  
+```bash
+cd frontend  
+npm install
+node server.js  
+```
+6️⃣ Terminal:
+```bash  
+Server running on port 5000
+MongoDB connected/
+```
 
 ---
 🚀 **ShopMart – Revolutionizing E-Commerce with AI!** 🛒  
