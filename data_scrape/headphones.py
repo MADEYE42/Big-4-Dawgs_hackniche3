@@ -36,7 +36,7 @@ def scrape_amazon_products(base_url, num_pages=1):
 
             if response.status_code == 503:
                 print(
-                    f"⚠️  Amazon blocked the request (503). Retrying with a new User-Agent..."
+                    f"Amazon blocked the request (503). Retrying with a new User-Agent..."
                 )
                 time.sleep(random.uniform(5, 10))
                 continue  # Skip this page and try again in the next iteration
