@@ -5,12 +5,14 @@ import Home from "./pages/Home";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Categories from "./pages/Categories";
-import Dashboard from "./pages/Dashboard"; // Import Dashboard if not already imported
+import SDashboard from "./pages/SellerDashboard"; 
+import ADashboard from "./pages/Admin"; 
 
-function ProtectedRoute({ children, allowedRoles }) {
+// Protected Route Component
+const ProtectedRoute = ({ children, allowedRoles }) => {
     const isAuthenticated = localStorage.getItem("token");
     const userRole = localStorage.getItem("role");
-    console.log(userRole);
+
     if (!isAuthenticated) {
         return <Navigate to="/login" replace />;
     }
@@ -20,25 +22,42 @@ function ProtectedRoute({ children, allowedRoles }) {
     }
 
     return children ? children : <Outlet />;
-}
+};
 
 function App() {
     return (
         <Router>
-            <Navbar />
-            <Routes>
-                <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
-                
-                {/* Protected Route for Seller/Admin */}
-                <Route element={<ProtectedRoute allowedRoles={["seller", "admin"]} />}>
-                    <Route path="/dashboard" element={<Dashboard />} />
-                </Route>
+            {/* Responsive Navbar */}
+            <div className="fixed top-0 w-full z-50 bg-white shadow-md">
+                <Navbar />
+            </div>
 
-                <Route path="/shop" element={<ProtectedRoute><Categories /></ProtectedRoute>} />
-            </Routes>
-            <Footer />
+            {/* Main Content */}
+            <div className="mt-16 min-h-screen bg-gray-100 ">
+                <Routes>
+                    <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/register" element={<Register />} />
+                    
+                    {/* Seller Dashboard (Protected) */}
+                    <Route element={<ProtectedRoute allowedRoles={["seller"]} />}>
+                        <Route path="/seller-dashboard" element={<SDashboard />} />
+                    </Route>
+
+                    {/* Admin Dashboard (Protected) */}
+                    <Route element={<ProtectedRoute allowedRoles={["admin"]} />}>
+                        <Route path="/admin-dashboard" element={<ADashboard />} />
+                    </Route>
+
+                    {/* Shop Page */}
+                    <Route path="/shop" element={<ProtectedRoute><Categories /></ProtectedRoute>} />
+                </Routes>
+            </div>
+
+            {/* Responsive Footer */}
+            <div className="w-full bg-gray-900 text-white text-center py-4">
+                <Footer />
+            </div>
         </Router>
     );
 }

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { register } from "../utils/api";
 import { useNavigate } from "react-router-dom";
+import { FaGoogle } from "react-icons/fa";
 
 const Register = () => {
     const [form, setForm] = useState({ name: "", email: "", password: "", role: "" });
@@ -17,7 +18,6 @@ const Register = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log("Submitting form data:", form);
         setError("");
         try {
             if (!form.role) {
@@ -33,18 +33,17 @@ const Register = () => {
     };
 
     return (
-        <div className="flex h-screen font-[Poppins] ">
+        <div className="flex flex-col md:flex-row h-screen font-poppins">
             {/* Left Side - Form */}
-            <div className="w-1/2 flex flex-col justify-center items-center bg-white p-12">
+            <div className="w-full md:w-1/2 flex flex-col justify-center items-center bg-white p-6 md:p-12">
                 <div className="w-full max-w-md">
                     <div className="flex justify-center mb-6">
-                        <img src="/logo.png" alt="Logo" className="h-10" />
+                        <img src="/logo.png" alt="Logo" className="h-12" />
                     </div>
 
-                    <h2 className="text-2xl font-semibold text-gray-900 text-center mb-2">Create an account</h2>
+                    <h2 className="text-3xl font-bold text-gray-900 text-center mb-2">Join ShopMart</h2>
                     <p className="text-gray-500 text-center mb-6">
-                        Already have an account?{" "}
-                        <a href="/login" className="text-black font-medium">Log in</a>
+                        Already have an account? <a href="/login" className="text-black font-medium">Log in</a>
                     </p>
 
                     {error && (
@@ -67,7 +66,7 @@ const Register = () => {
                         </div>
 
                         <div>
-                            <label className="block text-gray-700 text-sm font-medium mb-1">Email address</label>
+                            <label className="block text-gray-700 text-sm font-medium mb-1">Email Address</label>
                             <input
                                 type="email"
                                 name="email"
@@ -116,18 +115,22 @@ const Register = () => {
 
                     <div className="text-center my-4 text-gray-500">OR</div>
                     
-                    <button className="w-full border border-gray-300 text-gray-700 p-3 rounded-lg font-medium hover:bg-gray-100 transition duration-300">
-                        Sign up with SSO
+                    <button className="w-full border border-gray-300 text-gray-700 p-3 rounded-lg font-medium flex items-center justify-center gap-2 hover:bg-gray-100 transition duration-300">
+                        <FaGoogle className="text-red-500" /> Sign up with Google
                     </button>
                 </div>
             </div>
 
-            {/* Right Side - Design Pattern */}
-            <div className="w-1/2 bg-gray-900 flex items-center justify-center">
-                <div className="grid grid-cols-3 gap-2">
-                    {Array(9).fill(null).map((_, i) => (
-                        <div key={i} className="w-16 h-16 bg-black rounded-br-full"></div>
-                    ))}
+            {/* Right Side - E-Commerce Banner */}
+            <div className="hidden md:flex w-1/2 bg-gradient-to-r from-black to-gray-800 items-center justify-center">
+                <div className="text-center text-white px-8">
+                    <h2 className="text-4xl font-bold mb-4">Start Your Shopping Journey</h2>
+                    <p className="text-lg text-gray-300 mb-6">Join ShopMart and explore thousands of amazing products at unbeatable prices.</p>
+                    <div className="grid grid-cols-3 gap-3">
+                        {Array(9).fill(null).map((_, i) => (
+                            <div key={i} className="w-16 h-16 bg-white opacity-20 rounded-lg"></div>
+                        ))}
+                    </div>
                 </div>
             </div>
         </div>
@@ -135,4 +138,3 @@ const Register = () => {
 };
 
 export default Register;
-    

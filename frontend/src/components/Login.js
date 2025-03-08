@@ -22,7 +22,8 @@ const Login = () => {
             localStorage.setItem("role", res.data.role);
 
             if (res.data.role === "customer") navigate("/");
-            else navigate("/dashboard");
+            else if(res.data.role === "admin") navigate("/admin-dashboard")
+            else navigate("/seller-dashboard");
         } catch (err) {
             setError(err.response?.data?.error || "Login failed. Please try again.");
         }
