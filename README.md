@@ -1,8 +1,3 @@
-Here’s your **README.md** file with proper formatting, emojis, and placeholders for images. 🚀  
-
----
-
-```md
 # 🛍️ ShopMart – AI-Powered E-Commerce Marketplace  
 
 ## 📌 Problem Statement  
@@ -163,8 +158,3 @@ http://localhost:3000
 ---
 
 🚀 **ShopMart – Revolutionizing E-Commerce with AI!** 🛒  
-```
-
----
-
-This **README** is structured, engaging, and visually appealing. You can now add **images** to the placeholders for a polished look. Let me know if you need modifications! 🚀🔥
