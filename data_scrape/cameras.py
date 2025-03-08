@@ -316,24 +316,34 @@ class AmazonScraper:
         )
         product["prime"] = "Yes" if prime_elem else "No"
 
-        # Extract delivery date with multiple approaches
+        # Extract delivery date with multiple approaches - FIXED THIS SECTION
         delivery = "N/A"
-        # Try different text patterns
-        for text in ["Get it by", "delivery", "Delivery by"]:
+
+        # Look for delivery date text in spans
+        delivery_phrases = ["Get it by", "Delivery by", "FREE delivery"]
+        for phrase in delivery_phrases:
             for span in container.select("span"):
-                if text.lower() in span.text.lower():
+                if phrase in span.text:
+                    # Extract just the delivery information
                     delivery = span.text.strip()
                     break
             if delivery != "N/A":
                 break
 
-        # Try parent container
+        # Try the delivery message div
         if delivery == "N/A":
-            delivery_div = container.select_one("div[data-cy='delivery-recipe']")
+            delivery_div = container.select_one(
+                "div.a-row.a-size-base.a-color-secondary.s-align-children-center"
+            )
             if delivery_div:
-                bold_text = delivery_div.select_one("span.a-color-base.a-text-bold")
-                if bold_text:
-                    delivery = bold_text.text.strip()
+                delivery_spans = delivery_div.select("span.a-color-base")
+                for span in delivery_spans:
+                    for phrase in delivery_phrases:
+                        if phrase in span.text:
+                            delivery = span.text.strip()
+                            break
+                    if delivery != "N/A":
+                        break
 
         product["delivery"] = delivery
 
@@ -414,3 +424,4 @@ if __name__ == "__main__":
         save_to_csv(products, "amazon_cameras_partial.csv")
     except Exception as e:
         logger.error(f"An unexpected error occurred: {e}")
+
