@@ -1,121 +1,75 @@
 import csv
-import os
 import re
 
+# Define table name
+TABLE_NAME = "amazon_products"
 
-def clean_column_name(name):
-    """Clean column names to make them SQL-friendly"""
-    # Replace special characters with underscores
-    return re.sub(r"[^a-zA-Z0-9_]", "_", name.lower())
-
-
-def detect_data_type(value):
-    """Simple data type detection for SQL columns"""
-    if value is None or value == "":
-        return "TEXT"
-
-    # Try to convert to integer
-    try:
-        int(value)
-        return "INTEGER"
-    except ValueError:
-        pass
-
-    # Try to convert to float
-    try:
-        float(value)
-        return "REAL"
-    except ValueError:
-        pass
-
-    # Check if it might be a date (simple check)
-    if re.match(r"\d{4}-\d{2}-\d{2}", value):
-        return "DATE"
-
-    # Default to TEXT
-    return "TEXT"
+# Define column names and data types (excluding dropped columns)
+COLUMN_TYPES = {
+    "asin": "VARCHAR(20) PRIMARY KEY",
+    "delivery": "TEXT",
+    "discount": "VARCHAR(50)",
+    "image_url": "TEXT",
+    "original_price": "DECIMAL(10,2)",
+    "price": "DECIMAL(10,2)",
+    "rating": "DECIMAL(3,2)",
+    "sponsored": "BOOLEAN",
+    "title": "TEXT",
+    "url": "TEXT",
+    "category": "TEXT",
+}
 
 
-def csv_to_sql(csv_file, output_sql_file="output.sql", table_name="amazon_products"):
-    """
-    Convert CSV file to SQL commands and save to an .sql file
-    """
-    # Read CSV file
-    with open(csv_file, "r", encoding="utf-8") as file:
-        csv_reader = csv.reader(file)
-        headers = next(csv_reader)  # Get column names from first row
+def preprocess_value(column_name, value):
+    """Process values before insertion to handle special cases"""
+    value = value.strip() if isinstance(value, str) else value
 
-        # Clean column names
-        clean_headers = [clean_column_name(header) for header in headers]
+    # Convert 'Yes'/'No' values to 1/0 for the sponsored column
+    if column_name == "sponsored":
+        return "1" if str(value).lower() in ["yes", "true", "1"] else "0"
 
-        # Read first row to determine data types
-        try:
-            first_row = next(csv_reader)
-            file.seek(0)  # Reset file pointer
-            next(csv_reader)  # Skip header row again
-        except StopIteration:
-            first_row = [""] * len(headers)
+    # Remove currency symbols and commas for decimal columns
+    if column_name in ["original_price", "price"]:
+        value = re.sub(r"[^\d.]", "", value)  # Remove non-numeric characters except '.'
+        return f"{float(value):.2f}" if value else "NULL"  # Convert to float and format
 
-        # Determine column types based on first row
-        column_types = [detect_data_type(value) for value in first_row]
+    # Escape single quotes in text fields
+    if isinstance(value, str):
+        value = value.replace("'", "''")  # Escape single quotes for MySQL
 
-        # Create SQL file
-        with open(output_sql_file, "w", encoding="utf-8") as sql_file:
-            # Write DROP TABLE IF EXISTS statement
-            sql_file.write(f"DROP TABLE IF EXISTS {table_name};\n\n")
-
-            # Write CREATE TABLE statement
-            sql_file.write(f"CREATE TABLE {table_name} (\n")
-
-            # Add id column as primary key
-            sql_file.write("    id INTEGER PRIMARY KEY AUTOINCREMENT,\n")
-
-            # Add columns with detected data types
-            for i, (header, data_type) in enumerate(zip(clean_headers, column_types)):
-                sql_file.write(f"    {header} {data_type}")
-                if i < len(headers) - 1:
-                    sql_file.write(",")
-                sql_file.write("\n")
-
-            sql_file.write(");\n\n")
-
-            # Write INSERT statements for each row
-            for row in csv_reader:
-                # Clean data values and handle quotes for SQL
-                values = []
-                for val in row:
-                    # Replace single quotes with two single quotes for SQL
-                    val = val.replace("'", "''")
-                    values.append(f"'{val}'")
-
-                sql_file.write(
-                    f"INSERT INTO {table_name} ({', '.join(clean_headers)}) VALUES ({', '.join(values)});\n"
-                )
-
-    print(f"SQL file created successfully: {output_sql_file}")
+    return f"'{value}'" if value else "NULL"
 
 
-if __name__ == "__main__":
-    import argparse
+def generate_sql(csv_filename, sql_filename):
+    """Generate SQL file from CSV, removing duplicate ASINs"""
 
-    parser = argparse.ArgumentParser(description="Convert CSV file to SQL commands")
-    parser.add_argument("csv_file", help="Input CSV file")
-    parser.add_argument(
-        "--output",
-        "-o",
-        default="output.sql",
-        help="Output SQL file (default: output.sql)",
-    )
-    parser.add_argument(
-        "--table",
-        "-t",
-        default="amazon_products",
-        help="Table name (default: amazon_products)",
-    )
+    unique_asins = set()  # Track unique ASINs to remove duplicates
 
-    args = parser.parse_args()
+    with open(csv_filename, newline="", encoding="utf-8") as csvfile, open(
+        sql_filename, "w", encoding="utf-8"
+    ) as sqlfile:
+        reader = csv.DictReader(csvfile)
 
-    if not os.path.exists(args.csv_file):
-        print(f"Error: CSV file '{args.csv_file}' not found")
-    else:
-        csv_to_sql(args.csv_file, args.output, args.table)
+        # Create table SQL
+        sqlfile.write(f"DROP TABLE IF EXISTS {TABLE_NAME};\n")
+        sqlfile.write(f"CREATE TABLE {TABLE_NAME} (\n")
+        sqlfile.write(
+            ",\n".join([f"  {col} {dtype}" for col, dtype in COLUMN_TYPES.items()])
+        )
+        sqlfile.write("\n);\n\n")
+
+        # Insert data
+        for row in reader:
+            asin = row["asin"].strip()  # Get ASIN and remove spaces
+            if asin in unique_asins:
+                continue  # Skip duplicate ASINs
+            unique_asins.add(asin)
+
+            values = [preprocess_value(col, row[col]) for col in COLUMN_TYPES.keys()]
+            sqlfile.write(
+                f"INSERT INTO {TABLE_NAME} ({', '.join(COLUMN_TYPES.keys())}) VALUES ({', '.join(values)});\n"
+            )
+
+
+# Usage
+generate_sql("./data_scrape/merged_data.csv", "amazon_products.sql")
