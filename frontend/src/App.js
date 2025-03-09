@@ -9,6 +9,7 @@ import SDashboard from "./pages/SellerDashboard";
 import ADashboard from "./pages/Admin"; 
 import ContactUs from "./pages/ContactUs";
 import AboutUs from "./pages/AboutUs";
+import ProductDetails    from "./pages/ProductDetails";
 
 // Protected Route Component
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -37,11 +38,12 @@ function App() {
             {/* Main Content */}
             <div className="mt-16 min-h-screen bg-gray-100 ">
                 <Routes>
-                    <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-                    <Route path="/login" element={<Login />} />
+                    <Route path="/home" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+                    <Route path="/" element={<Login />} />
                     <Route path="/register" element={<Register />} />
                     <Route path="/contact" element={<ContactUs />} />
                     <Route path="/about" element={<AboutUs />} />
+                    <Route path="/product/:asin" element={<ProductDetails />} />
                     {/* Seller Dashboard (Protected) */}
                     <Route element={<ProtectedRoute allowedRoles={["seller"]} />}>
                         <Route path="/seller-dashboard" element={<SDashboard />} />

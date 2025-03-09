@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { login } from "../utils/api";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
@@ -17,15 +16,27 @@ const Login = () => {
         e.preventDefault();
         setError("");
         try {
-            const res = await login(form);
-            localStorage.setItem("token", res.data.token);
-            localStorage.setItem("role", res.data.role);
+            const response = await fetch('http://localhost:3000/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(form),
+            });
 
-            if (res.data.role === "customer") navigate("/");
-            else if(res.data.role === "admin") navigate("/admin-dashboard")
-            else navigate("/seller-dashboard");
+            const res = await response.json();
+
+            if (response.ok) {
+
+                if (res.role === "customer") navigate("/home");
+                else if (res.role === "admin") navigate("/admin-dashboard");
+                else navigate("/seller-dashboard");
+            } else {
+                setError(res.message || "Login failed. Please try again.");
+            }
         } catch (err) {
-            setError(err.response?.data?.error || "Login failed. Please try again.");
+            console.error("Login error:", err);
+            setError("Network error. Please try again.");
         }
     };
 
@@ -110,7 +121,7 @@ const Login = () => {
                 </form>
 
                 <div className="text-center my-4 text-gray-500">OR</div>
-                
+
                 {/* Google Login Button */}
                 <button className="w-full border border-gray-500 hover:text-white p-3 rounded-lg font-medium hover:bg-gray-700 text-black transition duration-300 flex justify-center items-center">
                     <img src="/google-icon.png" alt="Google" className="h-5 w-5 mr-2" />

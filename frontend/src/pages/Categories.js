@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import SearchBar from "../components/SearchBar";
 
 const Categories = () => {
   const [products, setProducts] = useState([]);
   const [recommendedProduct, setRecommendedProduct] = useState(null);
+  const handleSearch = (searchTerm) => {
+    console.log('Searching for:', searchTerm);
+    // Perform your search logic here (e.g., fetch data from an API)
+  };
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -29,6 +34,10 @@ const Categories = () => {
   }, []);
   return (
     <div className="p-6 font-[Poppins] bg-gray-100 min-h-screen">
+      <div>
+        <SearchBar onSearch={handleSearch} />
+        {/* Other components */}
+      </div>
       <h1 className="text-3xl font-bold mb-6">Categories</h1>
 
       {/* Recommended Product Section */}
