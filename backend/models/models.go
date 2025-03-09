@@ -9,12 +9,15 @@ const (
 )
 
 type User struct {
-	ID          uint   `json:"id" gorm:"primaryKey"`
-	Name        string `json:"name"`
-	Email       string `json:"email" gorm:"unique"`
-	Password    string `json:"-"` // Password won't be included in JSON responses
-	Role        Role   `json:"role" gorm:"default:user"`
-	ReviewCount int    `json:"review_count" gorm:"default:0"`
+	ID                       uint   `json:"id" gorm:"primaryKey"`
+	Name                     string `json:"name"`
+	Email                    string `json:"email" gorm:"unique"`
+	Password                 string `json:"-"` // Password won't be included in JSON responses
+	Role                     Role   `json:"role" gorm:"default:user"`
+	ReviewCount              int    `json:"review_count" gorm:"default:0"`
+	TotalPurchases           int    `json:"total_purchase"`
+	ChallengeProgess         int    `json:"challenge_progress"`
+	TotalChallengesCompleted int    `json:"total_challenges_completed"`
 }
 
 type Seller struct {
