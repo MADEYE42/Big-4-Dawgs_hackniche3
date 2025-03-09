@@ -4,7 +4,9 @@ import (
 	"Users/Products/repository"
 	"Users/models"
 	"net/http"
+	"sort"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	logr "github.com/sirupsen/logrus"
@@ -61,7 +63,62 @@ func (c *ProductController) GetProductsByCategory(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, products)
+	// Define brand relevancy
+	brandKeywords := []string{"Apple", "HP", "Lenovo", "Dell", "Canon", "Samsung", "Microsoft", "Asus", "Acer", "Sony"}
+
+	// Score and sort products by brand relevancy
+	type ProductWithScore struct {
+		Product models.Product
+		Score   int
+	}
+
+	productsWithScores := make([]ProductWithScore, 0, len(products))
+
+	for _, product := range products {
+		score := 0
+		title := strings.ToLower(product.Name)
+
+		// Calculate brand relevancy score
+		for _, brand := range brandKeywords {
+			if strings.Contains(strings.ToLower(title), strings.ToLower(brand)) {
+				// Higher score for exact brand match
+				score += 100
+
+				// Additional score based on popularity (clicks)
+				score += int(product.Clicks)
+
+				// Give premium products higher relevancy if they match a brand
+				if product.Price > 1000 {
+					score += 20
+				}
+
+				break
+			}
+		}
+
+		// Still sort non-brand products by clicks
+		if score == 0 {
+			score = int(product.Clicks)
+		}
+
+		productsWithScores = append(productsWithScores, ProductWithScore{
+			Product: product,
+			Score:   score,
+		})
+	}
+
+	// Sort by score (descending)
+	sort.Slice(productsWithScores, func(i, j int) bool {
+		return productsWithScores[i].Score > productsWithScores[j].Score
+	})
+
+	// Extract sorted products
+	sortedProducts := make([]models.Product, len(productsWithScores))
+	for i, productWithScore := range productsWithScores {
+		sortedProducts[i] = productWithScore.Product
+	}
+
+	ctx.JSON(http.StatusOK, sortedProducts)
 }
 
 // GetProductsBySeller handles GET /products/seller/:seller_id
